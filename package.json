@@ -1,0 +1,53 @@
+{
+  "name": "mx-covid-serialize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "initialize": "babel-node src/scripts/index.js initialize"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/spaceship-labs/mx-covid-serialize.git"
+  },
+  "author": "pablo@spaceshiplabs.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spaceship-labs/mx-covid-serialize/issues"
+  },
+  "homepage": "https://github.com/spaceship-labs/mx-covid-serialize#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "csv-parser": "^2.3.3",
+    "csvtojson": "^2.0.10",
+    "decompress-zip": "^0.2.2",
+    "express": "^4.17.1",
+    "json-2-csv": "^3.7.6",
+    "moment": "^2.27.0",
+    "morgan-body": "^2.4.14",
+    "n-readlines": "^1.0.0",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
+    "progress": "^2.0.3",
+    "sequelize": "^6.3.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.11.1",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "nodemon": "^2.0.4"
+  }
+}
