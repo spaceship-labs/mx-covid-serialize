@@ -34,8 +34,7 @@ async function getDateArray(start) {
 
 async function initData() {
   const lastDay = await queries.days.getLastProcessed();
-  // console.log(lastDay);
-  // const lastDay = null;
+
   const startDateStr = lastDay
     ? Moment(lastDay.date, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD')
     : '2020-08-22';
@@ -43,7 +42,7 @@ async function initData() {
   const today = Moment();
   let err = false;
 
-  while (!err && today.isSameOrAfter(dateItr)) {
+  while (!err && today.isAfter(dateItr)) {
     let tries = 0;
     let done = false;
     const dateString = today.isSame(dateItr) ? null : dateItr.format('DD.MM.YYYY');
@@ -61,7 +60,7 @@ async function initData() {
     }
 
     if (done) result = await dataHelper.processDay(file);
-    // if (result && dateString) await queries.days.saveProcessed(dateString);
+    if (result && dateString) await dataHelper.saveProcessed(dateString);
     if (!done || !result) err = true;
 
     dateItr.add(1, 'days');
@@ -148,7 +147,9 @@ async function getUSData() {
   //   await downloadHelper.downloadCSV(url, filename);
 
   //   const parsedFile = await fileHelper.parseCSV(filename);
-  //   const data = dimension === 'population' ? dataHelper.getUSPopulation(parsedFile) : dataHelper.normalizeUSData(parsedFile);
+  //   const data = dimension === 'population'
+  // ? dataHelper.getUSPopulation(parsedFile)
+  // : dataHelper.normalizeUSData(parsedFile);
   //   usData[dimension] = data;
   // }
 
@@ -171,47 +172,7 @@ async function getUSData() {
 async function main(prcs) {
   await initDb();
   await db.sequelize.sync();
-  // const registry = {
-  //   fechaActualizacion: '2020-12-10',
-  //   idRegistro: 'cccccc',
-  //   origen: 1,
-  //   sector: 1,
-  //   entidadUM: 'xdxd',
-  //   sexo: 2,
-  //   entidadNac: 'xdxd',
-  //   entidadRes: 'xdxd',
-  //   municipioRes: 'xdxd',
-  //   tipoPaciente: 3,
-  //   fechaIngreso: '2020-10-25',
-  //   fechaSintomas: '2020-05-11',
-  //   fechaDefuncion: null,
-  //   intubado: false,
-  //   neumonia: true,
-  //   edad: 25,
-  //   nacionalidad: true,
-  //   embarazo: false,
-  //   lenguaIndigena: false,
-  //   diabetes: true,
-  //   epoc: false,
-  //   asma: true,
-  //   inmusupr: false,
-  //   hipertension: false,
-  //   otraComp: false,
-  //   cardiovascular: true,
-  //   obesidad: true,
-  //   renalCronica: false,
-  //   tabaquismo: true,
-  //   otroCaso: false,
-  //   resultado: 1,
-  //   migrante: false,
-  //   paisNacionalidad: 'Mexico',
-  //   paisOrigen: 'Mexico',
-  //   uci: false,
-  //   fechaAparicion: '2020-08-23',
-  //   fechaConfirmacion: null,
-  //   status: 'active',
-  // };
-  // await queries.govData.createRegistry(registry);
+
   switch (prcs) {
     case 'initialize':
       // await initialize();

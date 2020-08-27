@@ -30,6 +30,10 @@ function addModel(sequelize) {
       allowNull: true,
       type: DataTypes.INTEGER,
     },
+    recovered: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+    },
   }, {
     timestamps: true,
     tableName: 'mexico_data',

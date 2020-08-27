@@ -11,18 +11,7 @@ async function updateRegistry(params, id) {
 }
 
 async function createRegistry(regData) {
-  // try {
-  console.log(db.sequelize.models.GovData);
-  return db.sequelize.models.GovData.create(regData).catch((res) => {
-    console.log('Creaaaa!!');
-    console.log(res);
-  });
-  // } catch (e) {
-  // console.log('Error!!!!!!!!!!');
-  // console.error(e);
-  // }
-
-  // return true;
+  return db.sequelize.models.GovData.create(regData);
 }
 
 module.exports = {

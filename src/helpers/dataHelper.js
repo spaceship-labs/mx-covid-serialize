@@ -1,5 +1,3 @@
-import fileSys from 'fs';
-import csv from 'csv-parser';
 import ReadLines from 'n-readlines';
 import moment from 'moment';
 import fs from './fileHelper';
@@ -202,7 +200,15 @@ async function createRegistry(reg, fileDate) {
   const newRegistry = {
     ...reg, status, fechaAparicion, fechaConfirmacion, fechaAlta,
   };
-  return queries.govData.createRegistry(newRegistry);
+
+  try {
+    await queries.govData.createRegistry(newRegistry);
+  } catch (e) {
+    console.log(e);
+    console.error(`fileDate: ${fileDate} % idRegistro: ${reg.idRegistro} % params: ${JSON.stringify(newRegistry)}`);
+  }
+
+  return true;
 }
 
 async function updateRegistry(dbReg, reg, fileDate) {
@@ -211,7 +217,7 @@ async function updateRegistry(dbReg, reg, fileDate) {
   const newStatus = getStatus(statusData, fileDate);
 
   if (newStatus === dbReg.status) {
-    return false;
+    return true;
   }
 
   const params = {};
@@ -221,17 +227,22 @@ async function updateRegistry(dbReg, reg, fileDate) {
 
   params.status = newStatus;
 
-  return params;
+  try {
+    await queries.govData.updateRegistry({ ...params }, dbReg.id);
+  } catch (e) {
+    console.log(e);
+    console.error(`fileDate: ${fileDate} % idRegistro: ${reg.idRegistro} % dbReg: ${dbReg.id} % params: ${JSON.stringify(params)}`);
+  }
+
+  return true;
 }
 
 async function processRegistry(reg, fileDate) {
   const dbReg = await queries.govData.getRegistry(reg);
-  if (!dbReg) {
-    await createRegistry(reg, fileDate);
-  } else {
-    const updateParams = updateRegistry(dbReg, reg, fileDate);
-    if (updateParams) await queries.govData.updateRegistry(updateParams, dbReg.id);
-  }
+  const res = !dbReg
+    ? await createRegistry(reg, fileDate)
+    : await updateRegistry(dbReg, reg, fileDate);
+  return res;
 }
 
 async function processDay(day) {
@@ -326,105 +337,40 @@ async function processDay(day) {
       nacionalidad,
       fechaDefuncion,
     };
-    await processRegistry(registry, fileDate);
+    const a = await processRegistry(registry, fileDate);
     line = reader.next();
   }
 
-  // return new Promise((resolve) => {
-  //   fileSys.createReadStream(`./data/source/csv/${day}`)
-  //     .pipe(csv())
-  //     .on('data', (data) => {
-  //       registries += 1;
-  //       // addResult();
-  //       const {
-  //         FECHA_ACTUALIZACION: fechaActualizacion,
-  //         ID_REGISTRO: idRegistro,
-  //         ORIGEN: origen,
-  //         SECTOR: sector,
-  //         ENTIDAD_UM: entidadUM,
-  //         SEXO: sexo,
-  //         ENTIDAD_NAC: entidadNac,
-  //         ENTIDAD_RES: entidadRes,
-  //         MUNICIPIO_RES: municipioRes,
-  //         TIPO_PACIENTE: tipoPaciente,
-  //         FECHA_INGRESO: fechaIngreso,
-  //         FECHA_SINTOMAS: fechaSintomas,
-  //         FECHA_DEF: fechaDefuncionStr,
-  //         INTUBADO: intubado,
-  //         NEUMONIA: neumonia,
-  //         EDAD: edad,
-  //         NACIONALIDAD: nacionalidad,
-  //         EMBARAZO: embarazo,
-  //         HABLA_LENGUA_INDIG: lenguaIndigena,
-  //         DIABETES: diabetes,
-  //         EPOC: epoc,
-  //         ASMA: asma,
-  //         INMUSUPR: inmusupr,
-  //         HIPERTENSION: hipertension,
-  //         OTRA_COM: otraComp,
-  //         CARDIOVASCULAR: cardiovascular,
-  //         OBESIDAD: obesidad,
-  //         RENAL_CRONICA: renalCronica,
-  //         TABAQUISMO: tabaquismo,
-  //         OTRO_CASO: otroCaso,
-  //         RESULTADO: resultado,
-  //         MIGRANTE: migrante,
-  //         PAIS_NACIONALIDAD: paisNacionalidad,
-  //         PAIS_ORIGEN: paisOrigen,
-  //         UCI: uci,
-  //       } = data;
-
-  //       const fechaDefuncion = fechaDefuncionStr === '9999-99-99'
-  //         || !fechaDefuncionStr
-  //         ? null
-  //         : moment(fechaDefuncionStr, 'YYYY-MM-DD').format('YYYY-MM-DD');
-
-  //       const registry = {
-  //         fechaActualizacion,
-  //         idRegistro,
-  //         origen,
-  //         sector,
-  //         entidadUM,
-  //         sexo,
-  //         entidadNac,
-  //         entidadRes,
-  //         municipioRes,
-  //         tipoPaciente,
-  //         fechaIngreso,
-  //         fechaSintomas,
-  //         fechaDefuncion,
-  //         intubado,
-  //         neumonia,
-  //         edad,
-  //         nacionalidad,
-  //         embarazo,
-  //         lenguaIndigena,
-  //         diabetes,
-  //         epoc,
-  //         asma,
-  //         inmusupr,
-  //         hipertension,
-  //         otraComp,
-  //         cardiovascular,
-  //         obesidad,
-  //         renalCronica,
-  //         tabaquismo,
-  //         otroCaso,
-  //         resultado,
-  //         migrante,
-  //         paisNacionalidad,
-  //         paisOrigen,
-  //         uci,
-  //       };
-  //       fileData.push({ ...registry });
-  //     })
-  //     .on('end', () => {
-  //       finalRegistries = registries;
-  //       console.log(finalRegistries === fileData.length);
-  //       // resolve(true);
-  //     });
-  // });
   return true;
+}
+
+async function saveProcessed(dateStr) {
+  const municipalities = await queries.municipalities.getAll();
+  const procDay = moment(dateStr, 'DD.MM.YYYY').format('YYYY-MM-DD');
+
+  for (let i = 0; i < municipalities.length; i += 1) {
+    const mun = municipalities[i];
+    const { entityCode, municipalityCode } = mun;
+
+    const qryHelpers = { entityCode, municipalityCode, procDay };
+
+    const activeRegistries = await queries.govData.getByStatus('active', qryHelpers, 'count');
+    const suspiciousRegistries = await queries.govData.getByStatus('suspicious', 'count');
+    const deathRegistries = await queries.govData.getByStatus('death', qryHelpers, 'count');
+    const recoveryRegistries = await queries.govData.getByStatus('recovery', qryHelpers, 'count');
+    const negativeRegistries = await queries.govData.getByStatus('negative', qryHelpers, 'count');
+
+    const createParams = {
+      confirmed: activeRegistries,
+      deceased: deathRegistries,
+      negative: negativeRegistries,
+      recovered: recoveryRegistries,
+      suspicious: suspiciousRegistries,
+    };
+
+    await queries.mexData.saveDayData({ ...createParams });
+  }
+  await queries.days.dayProcessed(procDay);
 }
 
 exports.summarizeCases = summarizeCases;
@@ -433,3 +379,4 @@ exports.getUSPopulation = getUSPopulation;
 exports.normalizeUSData = normalizeUSData;
 exports.generateUSTimeSeries = generateUSTimeSeries;
 exports.processDay = processDay;
+exports.saveProcessed = saveProcessed;

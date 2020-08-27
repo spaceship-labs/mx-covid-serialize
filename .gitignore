@@ -1,5 +1,4 @@
 dist/
 node_modules/
 
-src/config/development.js
-src/config/production.js
+src/config/
