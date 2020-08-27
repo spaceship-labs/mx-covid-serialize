@@ -11,6 +11,10 @@ function addModel(sequelize) {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
+    uid: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
     fips: {
       allowNull: false,
       type: DataTypes.STRING,
@@ -19,9 +23,17 @@ function addModel(sequelize) {
       allowNull: true,
       type: DataTypes.STRING,
     },
-    state: {
+    provinceState: {
       allowNull: true,
       type: DataTypes.STRING,
+    },
+    lon: {
+      allowNull: false,
+      type: DataTypes.FLOAT,
+    },
+    lat: {
+      allowNull: false,
+      type: DataTypes.FLOAT,
     },
   }, {
     timestamps: true,

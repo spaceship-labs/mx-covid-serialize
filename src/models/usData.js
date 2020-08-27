@@ -11,53 +11,9 @@ function addModel(sequelize) {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
-    uid: {
-      allowNull: false,
-      type: DataTypes.DATEONLY,
-    },
-    iso2: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    iso3: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    code3: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
     fips: {
       allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    admin2: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    province: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    state: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    county_region: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    lat: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    long: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    combined_key: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     date: {
       allowNull: true,

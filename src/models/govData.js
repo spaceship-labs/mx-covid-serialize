@@ -76,7 +76,7 @@ function addModel(sequelize) {
     },
     nacionalidad: {
       allowNull: false,
-      type: DataTypes.SRING,
+      type: DataTypes.STRING,
     },
     embarazo: {
       allowNull: false,

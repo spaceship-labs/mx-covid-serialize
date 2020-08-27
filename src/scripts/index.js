@@ -34,15 +34,18 @@ async function getDateArray(start) {
 
 async function initData() {
   const lastDay = await queries.days.getLastProcessed();
+  const municipalities = await fileHelper.loadJSON('data/source/municipios.json');
+
+  await dataHelper.loadMunicipalities(municipalities);
 
   const startDateStr = lastDay
     ? Moment(lastDay.date, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD')
-    : '2020-08-22';
+    : '2020-04-12';
   const dateItr = Moment(startDateStr, 'YYYY-MM-DD');
   const today = Moment();
   let err = false;
-
-  while (!err && today.isAfter(dateItr)) {
+  let count = 0;
+  while (!err && today.isAfter(dateItr) && count < 3) {
     let tries = 0;
     let done = false;
     const dateString = today.isSame(dateItr) ? null : dateItr.format('DD.MM.YYYY');
@@ -74,6 +77,7 @@ async function initData() {
     console.log(`Last processed day: ${lastProcessed}`);
     console.error('Error during initialize se above for more details.');
   }
+  count += 1;
 }
 
 // Downloads and processes only the latest date returns

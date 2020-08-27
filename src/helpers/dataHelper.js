@@ -2,6 +2,7 @@ import ReadLines from 'n-readlines';
 import moment from 'moment';
 import fs from './fileHelper';
 import queries from '../queries';
+import govData from '../models/govData';
 
 const agregate = (entry, currentData, date) => {
   const newData = { ...currentData };
@@ -373,6 +374,12 @@ async function saveProcessed(dateStr) {
   await queries.days.dayProcessed(procDay);
 }
 
+async function loadMunicipalities(muns) {
+  for (let i = 0; i < muns.length; i += 1) {
+    await queries.municipalities.create({ ...muns[i] });
+  }
+}
+
 exports.summarizeCases = summarizeCases;
 exports.agregateDataDay = agregateDataDay;
 exports.getUSPopulation = getUSPopulation;
@@ -380,3 +387,4 @@ exports.normalizeUSData = normalizeUSData;
 exports.generateUSTimeSeries = generateUSTimeSeries;
 exports.processDay = processDay;
 exports.saveProcessed = saveProcessed;
+exports.loadMunicipalities = loadMunicipalities;
