@@ -358,11 +358,11 @@ async function saveProcessed(dateStr) {
 
     const qryHelpers = { entityCode, municipalityCode, procDay };
 
-    const activeRegistries = await queries.govData.getByStatus('active', qryHelpers);
-    const suspiciousRegistries = await queries.govData.getByStatus('suspicious');
-    const deathRegistries = await queries.govData.getByStatus('death', qryHelpers);
-    const recoveryRegistries = await queries.govData.getByStatus('recovery', qryHelpers);
-    const negativeRegistries = await queries.govData.getByStatus('negative', qryHelpers);
+    const activeRegistries = await queries.govData.getByCountStatus('active', qryHelpers);
+    const suspiciousRegistries = await queries.govData.getByCountStatus('suspicious', qryHelpers);
+    const deathRegistries = await queries.govData.getByCountStatus('death', qryHelpers);
+    const recoveryRegistries = await queries.govData.getByCountStatus('recovery', qryHelpers);
+    const negativeRegistries = await queries.govData.getByCountStatus('negative', qryHelpers);
 
     const createParams = {
       confirmed: activeRegistries,
