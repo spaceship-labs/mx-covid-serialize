@@ -45,7 +45,7 @@ async function initData() {
   const today = Moment();
   let err = false;
   let count = 0;
-  while (!err && today.isAfter(dateItr) && count < 3) {
+  while (!err && today.isAfter(dateItr) && count < 5) {
     let tries = 0;
     let done = false;
     const dateString = today.isSame(dateItr) ? null : dateItr.format('DD.MM.YYYY');
@@ -67,6 +67,7 @@ async function initData() {
     if (!done || !result) err = true;
 
     dateItr.add(1, 'days');
+    count += 1;
   }
 
   if (!err) {
@@ -77,7 +78,6 @@ async function initData() {
     console.log(`Last processed day: ${lastProcessed}`);
     console.error('Error during initialize se above for more details.');
   }
-  count += 1;
 }
 
 // Downloads and processes only the latest date returns
