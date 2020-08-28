@@ -6,7 +6,11 @@ async function dayProcessed(dateStr) {
 
   const today = moment().format('YYYY-MM-DD');
 
-  const res = await db.Days.create({ date: dateStr, firstProcess: today, updateDate: today });
+  const res = await db.sequelize.models.Days.create({
+    date: dateStr,
+    firstProcess: today,
+    updateDate: today,
+  });
   return !!res;
 }
 

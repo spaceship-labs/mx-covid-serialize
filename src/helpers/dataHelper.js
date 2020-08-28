@@ -354,7 +354,7 @@ async function saveProcessed(dateStr) {
 
   for (let i = 0; i < municipalities.length; i += 1) {
     const mun = municipalities[i];
-    const { entityCode, municipalityCode } = mun;
+    const { entityCode, municipalityCode, id: munId } = mun;
 
     const qryHelpers = { entityCode, municipalityCode, procDay };
 
@@ -372,7 +372,7 @@ async function saveProcessed(dateStr) {
       suspicious: suspiciousRegistries,
     };
 
-    await queries.mexData.saveDayData({ ...createParams });
+    await queries.mexData.saveDayData({ ...createParams }, munId);
   }
   await queries.days.dayProcessed(procDay);
 }

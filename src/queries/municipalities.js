@@ -4,4 +4,8 @@ async function create(mun) {
   return db.sequelize.models.Municipality.create({ ...mun });
 }
 
-module.exports = { create };
+async function getAll() {
+  return db.sequelize.models.Municipality.findAll({ attributes: ['id'] });
+}
+
+module.exports = { create, getAll };
