@@ -195,6 +195,7 @@ async function createRegistry(reg, fileDate) {
   const fechaConfirmacion = status === 'active'
     || status === 'death'
     || status === 'recovery'
+    || status === 'negative'
     ? `${fechaAparicion}` : null;
   const fechaAlta = status === 'recovery' ? `${fechaAparicion}` : null;
 
@@ -223,7 +224,9 @@ async function updateRegistry(dbReg, reg, fileDate) {
 
   const params = {};
   params.fechaAlta = newStatus === 'recovery' ? fileDate.format('YYYY-MM-DD') : dbReg.fechaAlta;
-  params.fechaConfirmacion = newStatus === 'active' ? fileDate.format('YYYY-MM-DD') : dbReg.fechaConfirmacion;
+  params.fechaConfirmacion = newStatus === 'active' || newStatus === 'negative'
+    ? fileDate.format('YYYY-MM-DD')
+    : dbReg.fechaConfirmacion;
   params.fechaDefuncion = newStatus === 'death' ? reg.fechaDefuncion : dbReg.fechaDefuncion;
 
   params.status = newStatus;
@@ -355,11 +358,11 @@ async function saveProcessed(dateStr) {
 
     const qryHelpers = { entityCode, municipalityCode, procDay };
 
-    const activeRegistries = await queries.govData.getByStatus('active', qryHelpers, 'count');
-    const suspiciousRegistries = await queries.govData.getByStatus('suspicious', 'count');
-    const deathRegistries = await queries.govData.getByStatus('death', qryHelpers, 'count');
-    const recoveryRegistries = await queries.govData.getByStatus('recovery', qryHelpers, 'count');
-    const negativeRegistries = await queries.govData.getByStatus('negative', qryHelpers, 'count');
+    const activeRegistries = await queries.govData.getByStatus('active', qryHelpers);
+    const suspiciousRegistries = await queries.govData.getByStatus('suspicious');
+    const deathRegistries = await queries.govData.getByStatus('death', qryHelpers);
+    const recoveryRegistries = await queries.govData.getByStatus('recovery', qryHelpers);
+    const negativeRegistries = await queries.govData.getByStatus('negative', qryHelpers);
 
     const createParams = {
       confirmed: activeRegistries,
