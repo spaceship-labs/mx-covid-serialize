@@ -72,8 +72,8 @@ async function getByCountStatus(status, params) {
   return instance.count({
     where: {
       [Op.and]: [
-        { municipalityRes: municipalityCode },
-        { entityRes: entityCode },
+        { municipioRes: municipalityCode },
+        { entidadRes: entityCode },
         { ...whereExtras },
       ],
     },
