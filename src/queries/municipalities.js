@@ -5,7 +5,7 @@ async function create(mun) {
 }
 
 async function getAll() {
-  return db.sequelize.models.Municipality.findAll({ attributes: ['id'] });
+  return db.sequelize.models.Municipality.findAll({ attributes: ['id', 'municipalityCode', 'entityCode'] });
 }
 
 module.exports = { create, getAll };
