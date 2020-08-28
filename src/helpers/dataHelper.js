@@ -365,6 +365,7 @@ async function saveProcessed(dateStr) {
     const negativeRegistries = await queries.govData.getByCountStatus('negative', qryHelpers);
 
     const createParams = {
+      dataDate: procDay,
       confirmed: activeRegistries,
       deceased: deathRegistries,
       negative: negativeRegistries,
