@@ -17,8 +17,7 @@ async function createRegistry(regData) {
 
 function getStatusParams(status, day) {
   const conds = [];
-  const qryParams = {};
-  if (status === 'active' || status === 'active') {
+  if (status === 'active' || status === 'negative') {
     conds.push({
       status,
       fechaAparicion: { [Op.lte]: day },
