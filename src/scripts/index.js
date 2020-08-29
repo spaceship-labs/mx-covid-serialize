@@ -44,8 +44,8 @@ async function initData() {
   const dateItr = Moment(startDateStr, 'YYYY-MM-DD');
   const today = Moment();
   let err = false;
-  let count = 0;
-  while (!err && today.isAfter(dateItr) && count < 5) {
+  // let count = 0;
+  while (!err && today.isAfter(dateItr)) {
     let tries = 0;
     let done = false;
     const dateString = today.isSame(dateItr) ? null : dateItr.format('DD.MM.YYYY');
@@ -67,7 +67,7 @@ async function initData() {
     if (!done || !result) err = true;
 
     dateItr.add(1, 'days');
-    count += 1;
+    // count += 1;
   }
 
   if (!err) {
